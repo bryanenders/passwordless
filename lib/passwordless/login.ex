@@ -23,8 +23,20 @@ defmodule Passwordless.Login do
 
   @spec valid?(t, <<_::416>>) :: boolean
   def valid?(%__MODULE__{} = login, validator) do
-    hash(validator) === login.hash and age(login) < @ttl
+    hashes_equal?(login, validator) and age(login) < @ttl
   end
+
+  defp hashes_equal?(login, validator) do
+    validator
+    |> hash()
+    |> hashes_equal?(login.hash, true)
+  end
+
+  defp hashes_equal?(<<x, left::binary>>, <<y, right::binary>>, acc) do
+    hashes_equal?(left, right, :erlang.and(acc, x === y))
+  end
+  defp hashes_equal?("", "", acc), do: acc
+  defp hashes_equal?(_, _, _), do: false
 
   defp age(login) do
     now = :calendar.universal_time |> :calendar.datetime_to_gregorian_seconds()
