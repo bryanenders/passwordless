@@ -14,7 +14,7 @@ https://medium.freecodecamp.com/9a100b2b5001
   1. Add `passwordless` to your list of dependencies in `mix.exs`:
 
     ```elixir
-    defp deps, do: [{:passwordless, "~> 0.0.2"}]
+    defp deps, do: [{:passwordless, "~> 0.1.0"}]
     ```
 
   2. Ensure `passwordless` is started before your application:
