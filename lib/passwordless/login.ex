@@ -1,9 +1,9 @@
 defmodule Passwordless.Login do
-  defstruct id: nil, hash: nil, user_id: nil, inserted_at: nil
+  defstruct [:hash, :id, :inserted_at, :user_id]
+
+  @moduledoc false
 
   @type t :: %Passwordless.Login{}
-
-  @ttl Application.get_env(:passwordless, :login_ttl)
 
   @spec generate(term) :: {t, <<_::512>>}
   def generate(user_id) do
@@ -23,7 +23,7 @@ defmodule Passwordless.Login do
 
   @spec valid?(t, <<_::416>>) :: boolean
   def valid?(%__MODULE__{} = login, validator) do
-    hashes_equal?(login, validator) and age(login) < @ttl
+    hashes_equal?(login, validator) and age(login) < ttl()
   end
 
   defp hashes_equal?(login, validator) do
@@ -49,6 +49,8 @@ defmodule Passwordless.Login do
 
     now - inserted_at
   end
+
+  defp ttl, do: Application.get_env(:passwordless, :login_ttl)
 
   defp hash(validator) do
     :sha256

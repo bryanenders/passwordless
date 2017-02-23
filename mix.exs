@@ -4,15 +4,17 @@ defmodule Passwordless.Mixfile do
   def project do
     [
       app: :passwordless,
-      version: "0.0.2",
-      elixir: "~> 1.3",
-      description: "Passwordless authentication.",
-      package: package,
       build_embedded: Mix.env === :prod,
+      deps: deps(),
+      description: "Token-based authentication library for Elixir.",
+      elixir: "~> 1.4",
+      package: package(),
       start_permanent: Mix.env === :prod,
-      deps: deps,
+      version: "0.0.2",
     ]
   end
+
+  defp deps, do: [{:ex_doc, ">= 0.0.0", only: :dev}]
 
   defp package do
     [
@@ -22,7 +24,7 @@ defmodule Passwordless.Mixfile do
     ]
   end
 
-  defp deps, do: [{:ex_doc, ">= 0.0.0", only: :dev}]
-
-  def application, do: [mod: {Passwordless, []}, applications: [:crypto]]
+  def application do
+    [mod: {Passwordless.Application, []}, applications: [:crypto]]
+  end
 end
