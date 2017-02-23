@@ -1,11 +1,18 @@
 defmodule Passwordless.LoginRepo do
   alias Passwordless.Login
 
+  @moduledoc false
+
   @type on_start :: {:ok, pid} | {:error, {:already_started, pid} | term}
 
-  @spec start_link() :: on_start
-  def start_link do
-    Agent.start_link(fn -> %{data: %{}, user_id_idx: %{}} end, name: __MODULE__)
+  @spec delete(Login.t) :: :ok
+  def delete(%Login{id: id, user_id: user_id}) do
+    Agent.update __MODULE__, fn %{data: data, user_id_idx: user_id_idx} ->
+      %{
+        data: Map.delete(data, id),
+        user_id_idx: Map.delete(user_id_idx, user_id),
+      }
+    end
   end
 
   @spec get(<<_::96>>) :: Login.t | nil
@@ -30,13 +37,8 @@ defmodule Passwordless.LoginRepo do
     end
   end
 
-  @spec delete(Login.t) :: :ok
-  def delete(%Login{id: id, user_id: user_id}) do
-    Agent.update __MODULE__, fn %{data: data, user_id_idx: user_id_idx} ->
-      %{
-        data: Map.delete(data, id),
-        user_id_idx: Map.delete(user_id_idx, user_id),
-      }
-    end
+  @spec start_link() :: on_start
+  def start_link do
+    Agent.start_link(fn -> %{data: %{}, user_id_idx: %{}} end, name: __MODULE__)
   end
 end

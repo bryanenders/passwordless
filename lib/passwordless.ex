@@ -1,6 +1,4 @@
 defmodule Passwordless do
-  use Application
-
   alias Passwordless.{Login, LoginRepo}
 
   @spec generate_login_token(term) :: <<_::512>>
@@ -24,14 +22,4 @@ defmodule Passwordless do
     end
   end
   def redeem(_token), do: :error
-
-  ## Callbacks
-
-  def start(_type, _args) do
-    import Supervisor.Spec, warn: false
-
-    Supervisor.start_link [worker(LoginRepo, [])],
-      strategy: :one_for_one,
-      name: Passwordless.Supervisor
-  end
 end
